@@ -1,17 +1,23 @@
-# luma
+# 🌙 Luma – Effortless Note-Taking, Elevated  
 
-A new Flutter project.
+Luma is a sleek, open-source, and offline-first note-taking app designed for **Android & Linux** users who value **privacy, simplicity, and speed**. Whether you're jotting down quick thoughts or organizing deep ideas, Luma keeps your notes **secure, accessible, and beautifully minimal**.  
 
-## Getting Started
+## ✨ Features  
 
-This project is a starting point for a Flutter application.
+- **📝 Intuitive & Minimal UI** – Clean, distraction-free interface.  
+- **📶 100% Offline** – Your notes, your device, your privacy.  
+- **🔒 No Cloud, No Ads** – Full control over your data.  
+- **📂 Organized & Fast** – Smart sorting and easy navigation.  
+- **💡 Open Source** – Transparent, community-driven, and hackable.  
+- **📱🖥️ Cross-Platform** – Built for Android & Linux.  
 
-A few resources to get you started if this is your first Flutter project:
+## 🚀 Installation  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### **Android**  
+Download the latest APK from [Releases](https://github.com/yourusername/Luma/releases).  
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-"# Luma" 
+### **Linux**  
+```bash
+git clone https://github.com/yourusername/Luma.git
+cd Luma
+./install.sh
