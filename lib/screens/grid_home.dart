@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:luma/core/themes/app_theme.dart';
-// ^ Adjust the import to match your actual path for AppColorTheme.
+import 'package:luma/screens/calendar_screen.dart';
+import 'package:luma/screens/category_screen.dart';
+import 'package:luma/screens/profile_screen.dart';
 
 class GridHomeScreen extends StatefulWidget {
   const GridHomeScreen({Key? key}) : super(key: key);
@@ -10,257 +11,335 @@ class GridHomeScreen extends StatefulWidget {
 }
 
 class _GridHomeScreenState extends State<GridHomeScreen> {
-  // Simulating tab selection. Index 1 => "All (32)" is selected by default.
   int _selectedTabIndex = 1;
-
+  int _currentIndex = 0;
   final List<String> _tabs = ['UiUX (14)', 'All (32)', 'Lifestyle (3)'];
+
+  final List<Widget> _screens = [
+    const _HomeContent(),
+    const CalendarScreen(),
+    const SizedBox(), // Placeholder for add button
+    const CategoryScreen(),
+    const ProfileScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final colorTheme = Theme.of(context).extension<AppColorTheme>()!;
-    final size = MediaQuery.of(context).size;
-
     return Scaffold(
-      backgroundColor: colorTheme.surface,
-      appBar: AppBar(
-        backgroundColor: colorTheme.surface,
-        elevation: 0,
-        centerTitle: false,
-        title: Text(
-          'Your Notes',
-          style: TextStyle(
-            color: colorTheme.textPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: size.width * 0.05,
-          ),
+      backgroundColor: Colors.white,
+      body: _screens[_currentIndex],
+      floatingActionButton: Container(
+        height: 68,
+        width: 68,
+        margin: const EdgeInsets.only(top: 20),
+        child: FloatingActionButton(
+          backgroundColor: const Color(0xFF5B67CA),
+          elevation: 0,
+          onPressed: () {
+            // Add new note functionality
+          },
+          child: const Icon(Icons.add, size: 32),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.more_vert, // Or any icon you prefer
-              color: colorTheme.textPrimary,
-            ),
-            onPressed: () {},
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: _buildBottomNavBar(),
+    );
+  }
+
+  Widget _buildBottomNavBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -5),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: size.width * 0.05,
-          vertical: size.height * 0.02,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // "Hey" + Crown Icon
-            Row(
-              children: [
-                Text(
-                  'Hey ',
-                  style: TextStyle(
-                    color: colorTheme.textPrimary,
-                    fontSize: size.width * 0.05,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Icon(
-                  Icons.crop, // You may use a custom crown icon if desired
-                  color: colorTheme.primary,
-                  size: size.width * 0.06,
-                ),
-              ],
-            ),
-            SizedBox(height: size.height * 0.005),
-            Text(
-              'Welcome Back',
-              style: TextStyle(
-                color: colorTheme.textPrimary,
-                fontSize: size.width * 0.08,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: size.height * 0.03),
+      child: BottomNavigationBar(
+        currentIndex: _currentIndex == 2 ? 0 : _currentIndex,
+        onTap: (index) {
+          if (index >= 2) index++;
+          setState(() => _currentIndex = index);
+        },
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        selectedItemColor: const Color(0xFF5B67CA),
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        type: BottomNavigationBarType.fixed,
+        items: [
+          _buildNavItem(Icons.view_list, 'Home'),
+          _buildNavItem(Icons.calendar_today_outlined, 'Calendar'),
+          const BottomNavigationBarItem(
+            icon: SizedBox(width: 50, height: 30),
+            label: '',
+          ),
+          _buildNavItem(Icons.grid_view, 'Category'),
+          _buildNavItem(Icons.person_outline, 'Profile'),
+        ],
+      ),
+    );
+  }
 
-            // Horizontal Tabs
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(_tabs.length, (index) {
-                  final isSelected = index == _selectedTabIndex;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedTabIndex = index;
-                      });
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(right: size.width * 0.04),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: size.width * 0.04,
-                        vertical: size.height * 0.01,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? colorTheme.primary.withOpacity(0.1)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        _tabs[index],
+  BottomNavigationBarItem _buildNavItem(IconData icon, String label) {
+    return BottomNavigationBarItem(
+      icon: Icon(icon),
+      label: label,
+    );
+  }
+}
+
+class _HomeContent extends StatelessWidget {
+  const _HomeContent();
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    const padding = 20.0;
+
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: padding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Row(
+                    children: [
+                      Text(
+                        'Hey ',
                         style: TextStyle(
-                          color: isSelected
-                              ? colorTheme.primary
-                              : colorTheme.textSecondary,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
-                          fontSize: size.width * 0.04,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ),
-                  );
-                }),
+                      Text(
+                        '👋',
+                        style: TextStyle(fontSize: 24),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFFB800),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.crop_square,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      const Icon(Icons.menu, size: 28),
+                      const SizedBox(width: 16),
+                      const Icon(Icons.search, size: 28),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            SizedBox(height: size.height * 0.03),
-
-            // Pastel Cards
-            _buildTaskCard(
-              context,
-              backgroundColor: const Color(0xffEEF0FE),
-              title: 'Favorite UX Book',
-              subtitle:
-                  'Lean UX: Applying Lean Principles\nto Improve User Experience',
-              listsText: '10+ lists',
-              date: '3 Apr 24',
-              tag: 'Research',
-            ),
-            _buildTaskCard(
-              context,
-              backgroundColor: const Color(0xffFEECEC),
-              title: '2024 Fashion Trend',
-              subtitle: 'Men\'s Casual Dress',
-              listsText: '10+ lists',
-            ),
-            _buildTaskCard(
-              context,
-              backgroundColor: const Color(0xffFFFCEB),
-              title: 'Webflow Web Design',
-              subtitle: 'Follow the modern Styles',
-              listsText: '12+ lists',
-            ),
-            _buildTaskCard(
-              context,
-              backgroundColor: const Color(0xffECFDF3),
-              title: 'Smart Home UX/UI Project',
-              subtitle: 'Interview with Stakeholders',
-              listsText: '8+ lists',
-            ),
-          ],
+              const SizedBox(height: 8),
+              const Text(
+                'Welcome Back',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 24),
+              _buildTabs(context),
+              const SizedBox(height: 24),
+              _buildNotesList(context),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  /// Builds a single task card with the pastel background, checkbox, title, etc.
-  Widget _buildTaskCard(
+  Widget _buildTabs(BuildContext context) {
+    return Container(
+      height: 40,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          _buildTab('UiUX (14)', true),
+          const SizedBox(width: 12),
+          _buildTab('All (32)', false),
+          const SizedBox(width: 12),
+          _buildTab('Lifestyle (3)', false),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTab(String text, bool isSelected) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.black : Colors.transparent,
+        borderRadius: BorderRadius.circular(50),
+        border: Border.all(
+          color: isSelected ? Colors.transparent : Colors.grey.shade300,
+        ),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: isSelected ? Colors.white : Colors.grey.shade600,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotesList(BuildContext context) {
+    return Column(
+      children: [
+        _buildNoteCard(
+          context,
+          title: 'Favorite UX Book',
+          subtitle:
+              'Lean UX: Applying Lean Principles to\nImprove User Experience.',
+          color: const Color(0xFFEEF0FE),
+          date: '3 Apr 24',
+          stats: const ['3', '2', '4'],
+          tags: const ['UX', 'Research', 'UI'],
+        ),
+        const SizedBox(height: 16),
+        _buildNoteCard(
+          context,
+          title: '2024 Fashion Trend',
+          subtitle: 'Mes Casual Dress',
+          color: const Color(0xFFFEECEC),
+        ),
+        const SizedBox(height: 16),
+        _buildNoteCard(
+          context,
+          title: 'Webflow Web Design',
+          subtitle: 'Follow the modern Styles\n12+ lists',
+          color: const Color(0xFFFFFCEB),
+        ),
+        const SizedBox(height: 16),
+        _buildNoteCard(
+          context,
+          title: 'Smart Home UX/UI Project',
+          subtitle: 'Interview with Stake Holders\n46+ lists',
+          color: const Color(0xFFECFDF3),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNoteCard(
     BuildContext context, {
-    required Color backgroundColor,
     required String title,
     required String subtitle,
-    required String listsText,
+    required Color color,
     String? date,
-    String? tag,
+    List<String>? stats,
+    List<String>? tags,
   }) {
-    final colorTheme = Theme.of(context).extension<AppColorTheme>()!;
-    final size = MediaQuery.of(context).size;
-
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: size.height * 0.02),
-      padding: EdgeInsets.all(size.width * 0.04),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(size.width * 0.06),
+        color: color,
+        borderRadius: BorderRadius.circular(32),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top Row: Checkbox icon, Title, and "lists" on the right
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 12),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                Icons.check_box_outline_blank,
-                color: colorTheme.textSecondary,
-              ),
-              SizedBox(width: size.width * 0.03),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: colorTheme.textPrimary,
-                    fontSize: size.width * 0.045,
-                    fontWeight: FontWeight.w600,
-                  ),
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade400),
+                  borderRadius: BorderRadius.circular(6),
                 ),
               ),
-              Text(
-                listsText,
-                style: TextStyle(
-                  color: colorTheme.textSecondary,
-                  fontSize: size.width * 0.04,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey.shade600,
+                    height: 1.5,
+                  ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: size.height * 0.01),
-
-          // Subtitle
-          Padding(
-            padding: EdgeInsets.only(left: size.width * 0.12),
-            child: Text(
-              subtitle,
-              style: TextStyle(
-                color: colorTheme.textSecondary,
-                fontSize: size.width * 0.037,
-              ),
+          if (date != null && stats != null && tags != null) ...[
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Icon(Icons.calendar_today,
+                    size: 18, color: Colors.grey.shade600),
+                const SizedBox(width: 4),
+                Text(date),
+                const SizedBox(width: 16),
+                Icon(Icons.people_outline,
+                    size: 18, color: Colors.grey.shade600),
+                const SizedBox(width: 4),
+                Text(stats[0]),
+                const SizedBox(width: 16),
+                Icon(Icons.mic_none, size: 18, color: Colors.grey.shade600),
+                const SizedBox(width: 4),
+                Text(stats[1]),
+                const SizedBox(width: 16),
+                Icon(Icons.link, size: 18, color: Colors.grey.shade600),
+                const SizedBox(width: 4),
+                Text(stats[2]),
+              ],
             ),
-          ),
-
-          // Optional date + tag row
-          if (date != null && tag != null) ...[
-            SizedBox(height: size.height * 0.01),
-            Padding(
-              padding: EdgeInsets.only(left: size.width * 0.12),
-              child: Row(
-                children: [
-                  Text(
-                    date,
-                    style: TextStyle(
-                      color: colorTheme.textSecondary,
-                      fontSize: size.width * 0.035,
-                    ),
-                  ),
-                  SizedBox(width: size.width * 0.03),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: size.width * 0.03,
-                      vertical: size.height * 0.003,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorTheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      tag,
-                      style: TextStyle(
-                        color: colorTheme.primary,
-                        fontSize: size.width * 0.035,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              children: tags
+                  .map((tag) => Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          tag,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ))
+                  .toList(),
             ),
           ],
         ],
