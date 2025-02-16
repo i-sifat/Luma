@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:luma/core/themes/app_theme.dart';
+import 'package:luma/screens/grid_home.dart';
 
 class ListHome extends StatelessWidget {
   const ListHome({super.key});
@@ -15,7 +16,7 @@ class ListHome extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
+            _buildHeader(context),
             const SizedBox(height: 20),
             _buildTitle(),
             const SizedBox(height: 20),
@@ -87,7 +88,7 @@ class ListHome extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -109,6 +110,16 @@ class ListHome extends StatelessWidget {
             ),
           ),
           const Spacer(),
+          IconButton(
+            icon: const Icon(Icons.grid_view),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const GridHomeScreen()),
+              );
+            },
+            tooltip: 'Switch to Grid View',
+          ),
           IconButton(
             icon: const Icon(Icons.search, size: 24),
             onPressed: () {},
